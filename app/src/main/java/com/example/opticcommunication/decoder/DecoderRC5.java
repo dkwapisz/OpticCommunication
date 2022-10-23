@@ -1,8 +1,5 @@
 package com.example.opticcommunication.decoder;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.nio.charset.StandardCharsets;
 import java.nio.charset.StandardCharsets;
 
 public class DecoderRC5 {
