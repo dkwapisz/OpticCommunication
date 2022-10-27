@@ -1,5 +1,6 @@
 package com.example.opticcommunication;
 
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -27,6 +28,8 @@ import com.example.opticcommunication.flashligtDetection.FlashlightDetection;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
+import com.example.opticcommunication.transceiver.TransceiverRC5;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -35,10 +38,12 @@ public class MainActivity extends AppCompatActivity {
     Bitmap bitmap;
     TextView textView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if(OpenCVLoader.initDebug()) Log.d("LOADED","success");
         else Log.d("LOADED","err");
 
@@ -94,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             if(grantResults[0] != PackageManager.PERMISSION_GRANTED){
                 getPermission();
             }
+
         }
     }
 }
