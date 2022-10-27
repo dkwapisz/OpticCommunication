@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class TransceiverRC5 {
 
-    private final long frameDurationMilis = 16;
+    private final long frameDurationMilis = 48;
     private final int frameDurationNanos = 666667;
     private final int framesPerSecond = 60;
     private final String cameraId;

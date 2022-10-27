@@ -46,9 +46,7 @@ public class FlashlightDetection {
         setX(0);
     }
 
-    public boolean detect(Bitmap bitmap){
-        Mat mat = new Mat();
-        Utils.bitmapToMat(bitmap,mat);
+    public boolean detect(Mat mat) {
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
         Imgproc.GaussianBlur(mat, mat, new Size(3, 3), 0);
         Imgproc.threshold(mat, mat, getThreshold(),255 ,Imgproc.THRESH_BINARY);
