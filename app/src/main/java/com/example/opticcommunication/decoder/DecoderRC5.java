@@ -17,7 +17,6 @@ public class DecoderRC5 {
     }
 
     private static String decodeFrame(String frame) {
-        String byt = frame.substring(3);
         byte characterToDecode = Byte.parseByte(frame.substring(3), 2);
         return new String(new byte[]{characterToDecode}, StandardCharsets.UTF_8);
     }
