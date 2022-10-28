@@ -7,36 +7,53 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.opticcommunication.flashligtDetection.FlashlightDetection;
 
+import org.opencv.android.CameraActivity;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.VideoCapture;
 
+<<<<<<< Updated upstream
 import com.example.opticcommunication.transceiver.TransceiverRC5;
 
 public class MainActivity extends AppCompatActivity {
+=======
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+>>>>>>> Stashed changes
 
 
-    Button photo;
-    ImageView imageView;
-    Bitmap bitmap;
-    TextView textView;
+public class MainActivity extends CameraActivity {
+
+    ArrayList<Boolean> bites = new ArrayList<Boolean>();
+    JavaCameraView javaCameraView;
+
+    @Override
+    protected List<? extends CameraBridgeViewBase> getCameraViewList() {
+        return Collections.singletonList(javaCameraView);
+    }
 
 
     @Override
@@ -46,45 +63,57 @@ public class MainActivity extends AppCompatActivity {
 
         if(OpenCVLoader.initDebug()) Log.d("LOADED","success");
         else Log.d("LOADED","err");
+        FlashlightDetection flashlightDetection = new FlashlightDetection(234,3,3);
+        flashlightDetection.setPercent(0.1);
 
         setContentView(R.layout.activity_main);
-        photo = findViewById(R.id.photo);
-        imageView = findViewById(R.id.imageView);
-        textView = findViewById(R.id.text);
+        javaCameraView = findViewById(R.id.JavaCameraView);
 
-        photo.setOnClickListener(new View.OnClickListener() {
+        javaCameraView.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
-            public void onClick(View view) {
-                getPermission();
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                getCameraPictureActivity.launch(intent);
+            public void onCameraViewStarted(int width, int height) {
+
+            }
+
+            @Override
+            public void onCameraViewStopped() {
+
+            }
+
+            @Override
+            public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+                Mat mat = inputFrame.rgba();
+                if (!mat.empty()){
+                    bites.add(flashlightDetection.detect(inputFrame.rgba()));
+                }
+//                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
+                return mat;
             }
         });
-
+//        photo.setOnClickListener(view -> {
+//            getPermission();
+//            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//            getCameraPictureActivity.launch(intent);
+//        });
     }
 
-    ActivityResultLauncher<Intent> getCameraPictureActivity = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        bitmap = (Bitmap) data.getExtras().get("data");
-                        if (bitmap != null) {
-                            FlashlightDetection flashlightDetection = new FlashlightDetection(225,5,5);
-//                            flashlightDetection.setRectangleParameters(0,0,100,100);
-                            flashlightDetection.setPercent(0.01);
-                            if (flashlightDetection.detect(bitmap)){
-                                textView.setText("swiatło");
-                            }else {
-                                textView.setText("brak");
-                            }
-                            imageView.setImageBitmap(flashlightDetection.bitMapTest);
-                        }
-                    }
-                }
-            });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        javaCameraView.enableView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        javaCameraView.disableView();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        javaCameraView.disableView();
+    }
 
     void getPermission(){
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
