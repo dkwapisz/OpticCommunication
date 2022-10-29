@@ -6,30 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="500dp"
-        android:id="@+id/imageView"
-        android:background="#001a5b"
-        android:layout_centerHorizontal="true"
-        ></ImageView>
+    <org.opencv.android.JavaCameraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/JavaCameraView"
+        ></org.opencv.android.JavaCameraView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="photo"
-        android:id="@+id/photo"
-        android:layout_below="@+id/imageView"
-        android:layout_centerHorizontal="true"
-        ></Button>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sprawdzam"
-        android:id="@+id/text"
-        android:layout_below="@+id/photo"
-        android:layout_centerHorizontal="true"
-        ></TextView>
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="photo"-->
+<!--        android:id="@+id/photo"-->
+<!--        android:layout_below="@+id/JavaCameraView"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        ></Button>-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="sprawdzam"-->
+<!--        android:id="@+id/text"-->
+<!--        android:layout_below="@+id/photo"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        ></TextView>-->
 
 
 </RelativeLayout>

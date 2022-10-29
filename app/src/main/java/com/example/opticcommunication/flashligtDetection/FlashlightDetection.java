@@ -30,6 +30,9 @@ public class FlashlightDetection {
 
     private double percent;
 
+    private Size blurSize;
+
+    private Size erodeSize;
 
     public Bitmap bitMapTest;
 
@@ -44,13 +47,15 @@ public class FlashlightDetection {
         setY(0);
         setW(0);
         setX(0);
+        blurSize = new Size(3, 3);
+        erodeSize = new Size(getKernelWidth(), getKernelHeight());
     }
 
-    public boolean detect(Mat mat) {
+    public boolean detect(Mat mat){
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.GaussianBlur(mat, mat, new Size(3, 3), 0);
+        Imgproc.GaussianBlur(mat, mat, blurSize, 0);
         Imgproc.threshold(mat, mat, getThreshold(),255 ,Imgproc.THRESH_BINARY);
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(getKernelWidth(), getKernelHeight()));
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, erodeSize);
         Imgproc.erode(mat, mat, kernel);
         Mat roi;
         if (x == 0 & y == 0 & w == 0 & h == 0){
