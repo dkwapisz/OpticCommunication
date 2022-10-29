@@ -1,34 +1,28 @@
 package com.example.opticcommunication;
 
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
-
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.media.Image;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.opticcommunication.flashligtDetection.FlashlightDetection;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
-
-import com.example.opticcommunication.transceiver.TransceiverRC5;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,13 +46,10 @@ public class MainActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.text);
 
-        photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getPermission();
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                getCameraPictureActivity.launch(intent);
-            }
+        photo.setOnClickListener(view -> {
+            getPermission();
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            getCameraPictureActivity.launch(intent);
         });
 
     }
