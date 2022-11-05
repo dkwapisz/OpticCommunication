@@ -10,4 +10,12 @@
         android:id="@+id/JavaCameraView"
         android:layout_width="247dp"
         android:layout_height="401dp"></org.opencv.android.JavaCameraView>
+
+    <Button
+        android:id="@+id/stopRecButton"
+        android:layout_width="168dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/JavaCameraView"
+        android:text="Stop" />
 </RelativeLayout>

@@ -17,6 +17,7 @@ public class Receiver {
     private FlashlightDetection flashlightDetection = new FlashlightDetection(234,3,3);
     private int ratio = 0;
     private List<Integer> frameList = new ArrayList<>();
+    private List<Integer> frameList2 = new ArrayList<>();
 
     public Receiver(int fps, int cameraFramerate) {
         this.flashlightDetection.setPercent(0.05);
@@ -58,9 +59,9 @@ public class Receiver {
         this.stripStream();
         for(int i = 0; i+29 < this.frameList.size(); i+=30) {
             this.bitBuffer.append(this.getBit(this.frameList.subList(i, i+29)));
-            if (this.bitBuffer.length() == 12) {
+            if (this.bitBuffer.length() == 11) {
                 this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
-                this.bitBuffer.delete(0, 12);
+                this.bitBuffer.delete(0, 11);
             }
         }
     }
@@ -72,8 +73,10 @@ public class Receiver {
     private String getBit(List<Integer> frames) {
         long numberOfZeros = frames.stream().filter(frame -> frame == 0).count();
         if (numberOfZeros > 15) {
+            frameList2.add(0);
             return "0";
         }
+        frameList2.add(1);
         return "1";
     }
 

@@ -28,7 +28,11 @@ import java.util.List;
 public class MainActivity extends CameraActivity {
 
     ArrayList<Boolean> bites = new ArrayList<Boolean>();
+    private ArrayList<Mat> frameList = new ArrayList<>();
     JavaCameraView javaCameraView;
+    boolean ifStopped;
+    Button stopButton;
+
     @Override
     protected List<? extends CameraBridgeViewBase> getCameraViewList() {
         return Collections.singletonList(javaCameraView);
@@ -41,11 +45,16 @@ public class MainActivity extends CameraActivity {
         setContentView(R.layout.activity_main);
         Receiver receiver = new Receiver(1, 30);
         OpenCVLoader.initDebug();
-        FlashlightDetection flashlightDetection = new FlashlightDetection(234,3,3);
-        flashlightDetection.setPercent(0.1);
 
         setContentView(R.layout.activity_main);
         javaCameraView = findViewById(R.id.JavaCameraView);
+        stopButton = findViewById(R.id.stopRecButton);
+
+        stopButton.setOnClickListener(view -> {
+            ifStopped = true;
+            receiver.decodeMessage();
+            System.out.println(receiver.getMessage());
+        });
 
         javaCameraView.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
@@ -61,10 +70,16 @@ public class MainActivity extends CameraActivity {
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
                 Mat mat = inputFrame.rgba();
-                receiver.decodeFrame(mat);
+                if (!ifStopped) {
+                    receiver.addFrame(mat);
+                } else {
+                    //decode
+                }
+//                receiver.decodeFrame(mat);
 //                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
                 return mat;
             }
+
         });
     }
 
@@ -86,17 +101,17 @@ public class MainActivity extends CameraActivity {
         javaCameraView.disableView();
     }
 
-    void getPermission(){
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.CAMERA},101);
+    void getPermission() {
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 101);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==102 && grantResults.length > 0){
-            if(grantResults[0] != PackageManager.PERMISSION_GRANTED){
+        if (requestCode == 102 && grantResults.length > 0) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 getPermission();
             }
 
