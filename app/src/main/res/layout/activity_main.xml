@@ -7,27 +7,7 @@
     tools:context=".MainActivity">
 
     <org.opencv.android.JavaCameraView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/JavaCameraView"
-        ></org.opencv.android.JavaCameraView>
-
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="photo"-->
-<!--        android:id="@+id/photo"-->
-<!--        android:layout_below="@+id/JavaCameraView"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        ></Button>-->
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="sprawdzam"-->
-<!--        android:id="@+id/text"-->
-<!--        android:layout_below="@+id/photo"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        ></TextView>-->
-
-
+        android:layout_width="247dp"
+        android:layout_height="401dp"></org.opencv.android.JavaCameraView>
 </RelativeLayout>
