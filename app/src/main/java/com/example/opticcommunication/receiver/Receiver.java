@@ -56,20 +56,26 @@ public class Receiver {
     }
 
     public void decodeMessage() {
-        while(this.frameList.size() >= 330) {
+        while(this.frameList.size() > 0) {
             this.stripStream();
-            List<Integer> currFrame = this.frameList.subList(0, 329);
-            this.frameList = this.frameList.subList(330, this.frameList.size() - 1);
+            if (this.frameList.size() < 330){
+                break;
+            }
+            List<Integer> currFrame = new ArrayList<>(this.frameList.subList(0, 329));
+            this.frameList = new ArrayList<>(this.frameList.subList(330, this.frameList.size() - 1));
             for (int i = 0; i + 29 <= 329; i += 30) {
-                this.bitBuffer.append(this.getBit(currFrame.subList(i, i + 29)));
+                this.bitBuffer.append(this.getBit(new ArrayList<>(currFrame.subList(i, i + 29))));
             }
         }
         this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
     }
 
     private void stripStream() {
-        this.frameList = this.frameList.subList(this.frameList.indexOf(0), this.frameList.size() - 1);
-        this.frameList = this.frameList.subList(this.frameList.indexOf(1), this.frameList.size() - 1);
+        this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(0), this.frameList.size() - 1));
+        if (this.frameList.size() == 0){
+            return;
+        }
+        this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(1), this.frameList.size() - 1));
     }
 
     private String getBit(List<Integer> frames) {

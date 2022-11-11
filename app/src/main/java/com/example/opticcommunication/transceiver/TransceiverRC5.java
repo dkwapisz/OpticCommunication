@@ -86,6 +86,7 @@ public class TransceiverRC5 {
                     waitInNanos(frameDurationInNanos);
                 }
                 progressBar.setProgress(progressBar.getProgress() + step);
+                waitInNanos(1_000_000_000);
             }
             separateThread.interrupt();
             separateThread = null;
