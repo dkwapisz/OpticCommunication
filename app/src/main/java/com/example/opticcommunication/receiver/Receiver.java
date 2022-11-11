@@ -56,17 +56,19 @@ public class Receiver {
     }
 
     public void decodeMessage() {
-        this.stripStream();
-        for(int i = 0; i+29 < this.frameList.size(); i+=30) {
-            this.bitBuffer.append(this.getBit(this.frameList.subList(i, i+29)));
-            if (this.bitBuffer.length() == 11) {
-                this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
-                this.bitBuffer.delete(0, 11);
+        while(this.frameList.size() >= 330) {
+            this.stripStream();
+            List<Integer> currFrame = this.frameList.subList(0, 329);
+            this.frameList = this.frameList.subList(330, this.frameList.size() - 1);
+            for (int i = 0; i + 29 <= 329; i += 30) {
+                this.bitBuffer.append(this.getBit(currFrame.subList(i, i + 29)));
             }
         }
+        this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
     }
 
     private void stripStream() {
+        this.frameList = this.frameList.subList(this.frameList.indexOf(0), this.frameList.size() - 1);
         this.frameList = this.frameList.subList(this.frameList.indexOf(1), this.frameList.size() - 1);
     }
 
