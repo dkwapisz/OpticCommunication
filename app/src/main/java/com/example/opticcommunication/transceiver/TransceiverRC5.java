@@ -54,7 +54,7 @@ public class TransceiverRC5 {
 
     private String appendEntryBits(String message, int counter) {
         if (counter % 2 == 0) {
-            message = "110" + message;
+            message = "111" + message;
         } else {
             message = "111" + message;
         }
@@ -86,6 +86,11 @@ public class TransceiverRC5 {
                     waitInNanos(frameDurationInNanos);
                 }
                 progressBar.setProgress(progressBar.getProgress() + step);
+                try {
+                    cameraManager.setTorchMode(cameraId, false);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
                 waitInNanos(1_000_000_000);
             }
             separateThread.interrupt();

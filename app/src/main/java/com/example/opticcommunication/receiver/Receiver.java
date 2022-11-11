@@ -61,21 +61,31 @@ public class Receiver {
             if (this.frameList.size() < 330){
                 break;
             }
-            List<Integer> currFrame = new ArrayList<>(this.frameList.subList(0, 329));
-            this.frameList = new ArrayList<>(this.frameList.subList(330, this.frameList.size() - 1));
-            for (int i = 0; i + 29 <= 329; i += 30) {
-                this.bitBuffer.append(this.getBit(new ArrayList<>(currFrame.subList(i, i + 29))));
+            List<Integer> currFrame = new ArrayList<>(this.frameList.subList(0, 330));
+//            this.frameList = new ArrayList<>(this.frameList.subList(330, this.frameList.size() - 1));
+            for (int i = 0; i + 30 <= 330; i += 30) {
+                this.bitBuffer.append(this.getBit(new ArrayList<>(currFrame.subList(i, i + 30))));
             }
+            this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
+            this.bitBuffer = new StringBuilder();
+            this.frameList = new ArrayList<>(this.frameList.subList(330, this.frameList.size()));
         }
         this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
+//        for(int i = 0; i + 30 < this.frameList.size(); i += 30){
+//            this.bitBuffer.append(this.getBit(this.frameList.subList(i,i+30)));
+//        }
+//        this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
     }
 
     private void stripStream() {
-        this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(0), this.frameList.size() - 1));
         if (this.frameList.size() == 0){
             return;
         }
-        this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(1), this.frameList.size() - 1));
+        this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(0), this.frameList.size()));
+        if (this.frameList.indexOf(1) == -1){
+            return;
+        }
+        this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(1), this.frameList.size()));
     }
 
     private String getBit(List<Integer> frames) {
