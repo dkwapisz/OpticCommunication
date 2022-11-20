@@ -6,6 +6,9 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -36,6 +39,8 @@ public class FlashlightDetection {
 
     public Bitmap bitMapTest;
 
+    public Mat mat;
+
 
 
     public FlashlightDetection(int threshold,int kernelWidth, int kernelHeight){
@@ -51,24 +56,32 @@ public class FlashlightDetection {
         erodeSize = new Size(getKernelWidth(), getKernelHeight());
     }
 
-    public boolean detect(Mat mat){
-        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.GaussianBlur(mat, mat, blurSize, 0);
-        Imgproc.threshold(mat, mat, getThreshold(),255 ,Imgproc.THRESH_BINARY);
+    public boolean detect(Mat matOriginal){
+
+        this.mat = matOriginal.clone();
+        Imgproc.cvtColor(this.mat, this.mat, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.GaussianBlur(this.mat, this.mat, blurSize, 0);
+        Imgproc.threshold(this.mat, this.mat, getThreshold(),255 ,Imgproc.THRESH_BINARY);
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, erodeSize);
-        Imgproc.erode(mat, mat, kernel);
+        Imgproc.erode(this.mat, this.mat, kernel);
         Mat roi;
-        if (x == 0 & y == 0 & w == 0 & h == 0){
-            roi = mat;
+        if (this.x == 0 & this.y == 0 & this.w == 0 & this.h == 0){
+            roi = this.mat;
         }else {
-            roi = mat.submat(y, y + h, x, x + w);
+            Rect rectCrop = new Rect(this.x, this.y, this.w, this.h);
+            roi = this.mat.submat(rectCrop);
         }
         Mat m = new Mat();
         bitMapTest = Bitmap.createBitmap(roi.cols(), roi.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(roi,bitMapTest);
-        Core.extractChannel(mat,m,0);
+        Core.extractChannel(roi,m,0);
         double totalNumberOfPixels = (double) roi.total();
         double numberOfWhitePixels = (double) Core.countNonZero(m);
+        Point point1 = new Point(x, y);
+        Point point2 = new Point(x+w, y+h);
+        Scalar color = new Scalar(255, 0, 0);
+        int thickness = 5;
+        Imgproc.rectangle (matOriginal, point1, point2, color, thickness);
         if (numberOfWhitePixels/totalNumberOfPixels >= percent){
             return true;
         }else {

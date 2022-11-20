@@ -21,6 +21,10 @@ public class Receiver {
 
     public Receiver() {
         this.flashlightDetection.setPercent(0.05);
+        this.flashlightDetection.setX(210);
+        this.flashlightDetection.setY(100);
+        this.flashlightDetection.setW(200);
+        this.flashlightDetection.setH(200);
     }
 
     public void addFrame(Mat frame) {
