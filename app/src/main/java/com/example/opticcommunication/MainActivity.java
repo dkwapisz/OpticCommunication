@@ -27,12 +27,12 @@ import java.util.List;
 
 public class MainActivity extends CameraActivity {
 
-    ArrayList<Boolean> bites = new ArrayList<Boolean>();
-    private ArrayList<Mat> frameList = new ArrayList<>();
     JavaCameraView javaCameraView;
     boolean ifStopped;
     Button stopButton;
-
+    Button resetButton;
+    Long captureTime = null;
+    TextView message;
     @Override
     protected List<? extends CameraBridgeViewBase> getCameraViewList() {
         return Collections.singletonList(javaCameraView);
@@ -43,40 +43,39 @@ public class MainActivity extends CameraActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Receiver receiver = new Receiver(1, 30);
+        Receiver receiver = new Receiver();
         OpenCVLoader.initDebug();
-
         setContentView(R.layout.activity_main);
         javaCameraView = findViewById(R.id.JavaCameraView);
+        message = findViewById(R.id.message);
         stopButton = findViewById(R.id.stopRecButton);
-
+        resetButton = findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(view -> {
+            ifStopped = false;
+            receiver.resetReceiver();
+        });
         stopButton.setOnClickListener(view -> {
             ifStopped = true;
+            receiver.setFrameRate(Math.round(System.nanoTime() - captureTime));
             receiver.decodeMessage();
-            System.out.println(receiver.getMessage());
+            message.setText(receiver.getMessage());
         });
-
         javaCameraView.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
-            public void onCameraViewStarted(int width, int height) {
-
-            }
+            public void onCameraViewStarted(int width, int height) {}
 
             @Override
-            public void onCameraViewStopped() {
-
-            }
+            public void onCameraViewStopped() {}
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+                if (captureTime == null) {
+                    captureTime = System.nanoTime();
+                }
                 Mat mat = inputFrame.rgba();
                 if (!ifStopped) {
                     receiver.addFrame(mat);
-                } else {
-                    //decode
                 }
-//                receiver.decodeFrame(mat);
-//                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
                 return mat;
             }
 

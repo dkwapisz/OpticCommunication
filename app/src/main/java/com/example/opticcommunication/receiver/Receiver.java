@@ -15,40 +15,12 @@ public class Receiver {
     private StringBuilder decodedMessage = new StringBuilder();
     private StringBuilder bitBuffer = new StringBuilder();
     private FlashlightDetection flashlightDetection = new FlashlightDetection(234,3,3);
-    private int ratio = 0;
     private List<Integer> frameList = new ArrayList<>();
     private List<Integer> frameList2 = new ArrayList<>();
+    private Integer frameRate = 0;
 
-    public Receiver(int fps, int cameraFramerate) {
+    public Receiver() {
         this.flashlightDetection.setPercent(0.05);
-        this.ratio = cameraFramerate/fps;
-    }
-
-    public void decodeFrame(Mat frame) {
-//        this.frameCounter++;
-//        Log.d("FrameCounter", String.valueOf(this.frameCounter));
-//        if (this.isReceiving) {
-//            if (this.frameList.size() == 500) {
-//                System.out.println(this.frameList);
-//            }
-//            this.frameList.add(flashlightDetection.detect(frame)?1:0);
-//            return;
-//        }
-//        Log.d("Message", this.decodedMessage.toString());
-//        Log.d("Buff", this.bitBuffer.toString());
-//        if (flashlightDetection.detect(frame)) {
-//            this.frameList.add(1);
-//            this.bitBuffer.append("1");
-//        } else {
-//            if (bitBuffer.length() == 0) {
-//                return;
-//            }
-//            this.bitBuffer.append("0");
-//        }
-//        if (this.bitBuffer.length() == 12) {
-//            this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
-//            this.bitBuffer.delete(0, 12);
-//        }
     }
 
     public void addFrame(Mat frame) {
@@ -58,23 +30,18 @@ public class Receiver {
     public void decodeMessage() {
         while(this.frameList.size() > 0) {
             this.stripStream();
-            if (this.frameList.size() < 330){
+            if (this.frameList.size() < 11*this.frameRate){
                 break;
             }
-            List<Integer> currFrame = new ArrayList<>(this.frameList.subList(0, 330));
-//            this.frameList = new ArrayList<>(this.frameList.subList(330, this.frameList.size() - 1));
-            for (int i = 0; i + 30 <= 330; i += 30) {
-                this.bitBuffer.append(this.getBit(new ArrayList<>(currFrame.subList(i, i + 30))));
+            List<Integer> currFrame = new ArrayList<>(this.frameList.subList(0, 11*this.frameRate));
+            for (int i = 0; i + this.frameRate <= 11*this.frameRate; i += this.frameRate) {
+                this.bitBuffer.append(this.getBit(new ArrayList<>(currFrame.subList(i, i + this.frameRate))));
             }
             this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
             this.bitBuffer = new StringBuilder();
-            this.frameList = new ArrayList<>(this.frameList.subList(330, this.frameList.size()));
+            this.frameList = new ArrayList<>(this.frameList.subList(11*this.frameRate, this.frameList.size()));
         }
         this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
-//        for(int i = 0; i + 30 < this.frameList.size(); i += 30){
-//            this.bitBuffer.append(this.getBit(this.frameList.subList(i,i+30)));
-//        }
-//        this.decodedMessage.append(DecoderRC5.decodeBitBuffer(this.bitBuffer.toString()));
     }
 
     private void stripStream() {
@@ -102,4 +69,15 @@ public class Receiver {
         return this.decodedMessage.toString();
     }
 
+    public void setFrameRate(int time) {
+        this.frameRate = Math.round(this.frameList.size()/ (time/1000000000));
+    }
+
+    public void resetReceiver() {
+        decodedMessage = new StringBuilder();
+        bitBuffer = new StringBuilder();
+        frameList = new ArrayList<>();
+        frameList2 = new ArrayList<>();
+        frameRate = 0;
+    }
 }

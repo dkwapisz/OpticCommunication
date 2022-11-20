@@ -1,21 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
     <org.opencv.android.JavaCameraView
         android:id="@+id/JavaCameraView"
-        android:layout_width="247dp"
-        android:layout_height="401dp"></org.opencv.android.JavaCameraView>
+        android:layout_width="309dp"
+        android:layout_height="429dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></org.opencv.android.JavaCameraView>
 
     <Button
         android:id="@+id/stopRecButton"
         android:layout_width="168dp"
         android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignBottom="@+id/JavaCameraView"
-        android:text="Stop" />
-</RelativeLayout>
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="53dp"
+        android:layout_marginBottom="16dp"
+        android:text="Stop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/resetButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/message" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="168dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="236dp"
+        android:layout_marginTop="524dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="19dp"
+        android:text="RESET"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="308dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="23dp"
+        app:layout_constraintBottom_toTopOf="@+id/resetButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/JavaCameraView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
