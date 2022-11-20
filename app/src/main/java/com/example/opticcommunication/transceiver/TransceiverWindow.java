@@ -5,6 +5,7 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -14,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.opticcommunication.R;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+
 public class TransceiverWindow extends AppCompatActivity {
 
     private TransceiverRC5 transceiverRC5;
@@ -22,6 +26,7 @@ public class TransceiverWindow extends AppCompatActivity {
     private Button sendButton;
     private Button clearButton;
     private ProgressBar messageProgressBar;
+    private Thread thread;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -58,15 +63,24 @@ public class TransceiverWindow extends AppCompatActivity {
             if (isNotNullValues()) {
                 String message = String.valueOf(messageTextView.getText());
                 int fps = Integer.parseInt(String.valueOf(fpsTextView.getText()));
-                try {
-                    transceiverRC5.transmitMessage(message, fps, messageProgressBar);
-                } catch (InterruptedException | CameraAccessException e) {
-                    e.printStackTrace();
-                }
+
+                this.thread = new Thread(() -> {
+                    try {
+                        messageProgressBar.setProgress(0);
+                        transceiverRC5.transmitMessage(message, fps, messageProgressBar);
+                    } catch (InterruptedException | CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                this.thread.start();
             }
         });
 
-        clearButton.setOnClickListener(view -> clearValues());
+        clearButton.setOnClickListener(view -> {
+            this.thread.interrupt();
+            clearValues();
+        });
     }
 
     private boolean isNotNullValues() {
@@ -78,4 +92,5 @@ public class TransceiverWindow extends AppCompatActivity {
         messageTextView.setText("");
         messageProgressBar.setProgress(0);
     }
+
 }

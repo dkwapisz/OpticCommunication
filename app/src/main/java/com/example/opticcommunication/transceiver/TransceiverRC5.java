@@ -14,11 +14,10 @@ import androidx.annotation.RequiresApi;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class TransceiverRC5 {
+public class TransceiverRC5 extends Thread {
 
     private final String cameraId;
     private final CameraManager cameraManager;
-    private Thread separateThread;
 
     public TransceiverRC5(CameraManager cameraManager) throws CameraAccessException {
         this.cameraManager = cameraManager;
@@ -30,7 +29,7 @@ public class TransceiverRC5 {
     }
 
     private int calculateProgressBarStep(int messageLength) {
-        return 1000 / messageLength;
+        return 1000 / messageLength / 11;
     }
 
     private ArrayList<String> convertStringToBits(String message) {
@@ -60,50 +59,47 @@ public class TransceiverRC5 {
     public void transmitMessage(String inputMessage, int fps, ProgressBar progressBar)
             throws InterruptedException, CameraAccessException {
 
-        Runnable runnable = () -> {
-            ArrayList<String> convertedMessage = convertStringToBits(inputMessage);
+        ArrayList<String> convertedMessage = convertStringToBits(inputMessage);
 
-            if (convertedMessage.isEmpty()) {
-                return;
-            }
-            progressBar.setProgress(0);
-            int step = calculateProgressBarStep(convertedMessage.size());
-            long frameDurationInNanos = calculateBitDuration(fps);
+        if (convertedMessage.isEmpty()) {
+            return;
+        }
+        int step = calculateProgressBarStep(convertedMessage.size());
+        System.out.println(step);
+        long frameDurationInNanos = calculateBitDuration(fps);
 
-            for (String message : convertedMessage) {
-                for (int i = 0; i < message.length(); i++) {
-                    try {
-                        cameraManager.setTorchMode(cameraId, message.charAt(i) == '1');
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
-
-                    waitInNanos(frameDurationInNanos);
+        for (String message : convertedMessage) {
+            for (int i = 0; i < message.length(); i++) {
+                try {
+                    cameraManager.setTorchMode(cameraId, message.charAt(i) == '1');
+                //System.out.println(message.charAt(i) == '1');
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+                if (Thread.currentThread().isInterrupted()) {
+                    System.out.println("Interrupted!");
+                    System.out.println(false);
+                    return;
                 }
                 progressBar.setProgress(progressBar.getProgress() + step);
+                waitInNanos(frameDurationInNanos);
             }
-            separateThread.interrupt();
-            separateThread = null;
             try {
                 cameraManager.setTorchMode(cameraId, false);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
-        };
-
-        if (separateThread == null) {
-            separateThread = new Thread(runnable);
-            separateThread.start();
+            waitInNanos(1_000_000_000);
         }
 
-    }
+        System.out.println(false);
+        try {
+            cameraManager.setTorchMode(cameraId, false);
+            progressBar.setProgress(1000);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
 
-    public Thread getSeparateThread() {
-        return separateThread;
-    }
-
-    public void setSeparateThread(Thread separateThread) {
-        this.separateThread = separateThread;
     }
 
     private void waitInNanos(long nanos) {
