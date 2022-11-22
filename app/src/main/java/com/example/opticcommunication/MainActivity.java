@@ -48,7 +48,7 @@ public class MainActivity extends CameraActivity {
         OpenCVLoader.initDebug();
         setContentView(R.layout.activity_main);
         javaCameraView = findViewById(R.id.JavaCameraView);
-        javaCameraView.setPreviewFPS(30000, 30000);
+        javaCameraView.setPreviewFPS(30, 30);
         message = findViewById(R.id.message);
         stopButton = findViewById(R.id.stopRecButton);
         resetButton = findViewById(R.id.resetButton);
