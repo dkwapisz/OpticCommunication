@@ -17,8 +17,12 @@ public class DecoderRC5 {
     }
 
     private static String decodeFrame(String frame) {
-        String byt = frame.substring(3);
-        byte characterToDecode = Byte.parseByte(frame.substring(3), 2);
+        byte characterToDecode = 0;
+        try {
+            characterToDecode = Byte.parseByte(frame.substring(3), 2);
+        } catch (Exception e) {
+            return " ";
+        }
         return new String(new byte[]{characterToDecode}, StandardCharsets.UTF_8);
     }
 }
