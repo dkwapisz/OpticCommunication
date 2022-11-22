@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <org.opencv.android.JavaCameraView
+    <com.example.opticcommunication.receiver.ReceiverCapture
         android:id="@+id/JavaCameraView"
         android:layout_width="310dp"
         android:layout_height="400dp"
         android:layout_marginStart="48dp"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></org.opencv.android.JavaCameraView>
+        app:layout_constraintTop_toTopOf="parent"></com.example.opticcommunication.receiver.ReceiverCapture>
 
     <Button
         android:id="@+id/stopRecButton"

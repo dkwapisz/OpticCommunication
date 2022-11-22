@@ -53,7 +53,7 @@ public class Receiver {
             return;
         }
         this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(0), this.frameList.size()));
-        if (this.frameList.indexOf(1) == -1){
+        if (!this.frameList.contains(1)){
             return;
         }
         this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(1), this.frameList.size()));
@@ -61,7 +61,7 @@ public class Receiver {
 
     private String getBit(List<Integer> frames) {
         long numberOfZeros = frames.stream().filter(frame -> frame == 0).count();
-        if (numberOfZeros > 15) {
+        if (numberOfZeros > Math.round(this.frameRate/2)) {
             frameList2.add(0);
             return "0";
         }
@@ -73,8 +73,8 @@ public class Receiver {
         return this.decodedMessage.toString();
     }
 
-    public void setFrameRate(int time) {
-        this.frameRate = Math.round(this.frameList.size()/ (time/1000000000));
+    public void setFrameRate(int frameRate) {
+        this.frameRate = frameRate;
     }
 
     public void resetReceiver() {
@@ -82,6 +82,5 @@ public class Receiver {
         bitBuffer = new StringBuilder();
         frameList = new ArrayList<>();
         frameList2 = new ArrayList<>();
-        frameRate = 0;
     }
 }
