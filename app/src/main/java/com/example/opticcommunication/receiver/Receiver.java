@@ -49,7 +49,7 @@ public class Receiver {
             return;
         }
         this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(0), this.frameList.size()));
-        if (this.frameList.indexOf(1) == -1){
+        if (!this.frameList.contains(1)){
             return;
         }
         this.frameList = new ArrayList<>(this.frameList.subList(this.frameList.indexOf(1), this.frameList.size()));

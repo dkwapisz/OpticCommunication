@@ -47,8 +47,7 @@ public class MainActivity extends CameraActivity {
         Receiver receiver = new Receiver();
         OpenCVLoader.initDebug();
         setContentView(R.layout.activity_main);
-        javaCameraView = findViewById(R.id.JavaCameraView);
-        javaCameraView.setPreviewFPS(30, 30);
+        javaCameraView = (ReceiverCapture) findViewById(R.id.JavaCameraView);
         message = findViewById(R.id.message);
         stopButton = findViewById(R.id.stopRecButton);
         resetButton = findViewById(R.id.resetButton);
@@ -56,6 +55,7 @@ public class MainActivity extends CameraActivity {
         resetButton.setOnClickListener(view -> {
             ifStopped = false;
             receiver.resetReceiver();
+            message.setText(" ");
         });
         stopButton.setOnClickListener(view -> {
             ifStopped = true;
@@ -64,7 +64,9 @@ public class MainActivity extends CameraActivity {
         });
         javaCameraView.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
-            public void onCameraViewStarted(int width, int height) {}
+            public void onCameraViewStarted(int width, int height) {
+                javaCameraView.setPreviewFPS(30, 30);
+            }
 
             @Override
             public void onCameraViewStopped() {}
