@@ -14,7 +14,7 @@
         android:theme="@style/Theme.OpticCommunication"
         tools:targetApi="31">
         <activity
-            android:name=".transceiver.TransceiverWindow"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -16,6 +16,11 @@ import java.util.ArrayList;
 
 public class TransceiverRC5 extends Thread {
 
+
+    private final long frameDurationMilis = 48;
+    private final int frameDurationNanos = 666667;
+    private final int framesPerSecond = 60;
+
     private final String cameraId;
     private final CameraManager cameraManager;
 
@@ -48,7 +53,7 @@ public class TransceiverRC5 extends Thread {
 
     private String appendEntryBits(String message, int counter) {
         if (counter % 2 == 0) {
-            message = "110" + message;
+            message = "111" + message;
         } else {
             message = "111" + message;
         }
