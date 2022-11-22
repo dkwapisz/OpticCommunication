@@ -19,6 +19,7 @@ import org.opencv.core.Mat;
 
 import com.example.opticcommunication.flashligtDetection.FlashlightDetection;
 import com.example.opticcommunication.receiver.Receiver;
+import com.example.opticcommunication.receiver.ReceiverCapture;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,12 +28,12 @@ import java.util.List;
 
 public class MainActivity extends CameraActivity {
 
-    JavaCameraView javaCameraView;
+    ReceiverCapture javaCameraView;
     boolean ifStopped;
     Button stopButton;
     Button resetButton;
-    Long captureTime = null;
     TextView message;
+
     @Override
     protected List<? extends CameraBridgeViewBase> getCameraViewList() {
         return Collections.singletonList(javaCameraView);
@@ -47,16 +48,17 @@ public class MainActivity extends CameraActivity {
         OpenCVLoader.initDebug();
         setContentView(R.layout.activity_main);
         javaCameraView = findViewById(R.id.JavaCameraView);
+        javaCameraView.setPreviewFPS(30000, 30000);
         message = findViewById(R.id.message);
         stopButton = findViewById(R.id.stopRecButton);
         resetButton = findViewById(R.id.resetButton);
+        receiver.setFrameRate(30);
         resetButton.setOnClickListener(view -> {
             ifStopped = false;
             receiver.resetReceiver();
         });
         stopButton.setOnClickListener(view -> {
             ifStopped = true;
-            receiver.setFrameRate(Math.round(System.nanoTime() - captureTime));
             receiver.decodeMessage();
             message.setText(receiver.getMessage());
         });
@@ -69,9 +71,6 @@ public class MainActivity extends CameraActivity {
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-                if (captureTime == null) {
-                    captureTime = System.nanoTime();
-                }
                 Mat mat = inputFrame.rgba();
                 if (!ifStopped) {
                     receiver.addFrame(mat);
